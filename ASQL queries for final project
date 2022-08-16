@@ -1,0 +1,67 @@
+CREATE VIEW films_and_actors AS (
+SELECT f.film_id, f.title, description, c.name, a.first_name, a.last_name FROM sakila.film as f
+JOIN sakila.film_category as fc ON f.film_id = fc.film_id
+JOIN sakila.category as c on fc.category_id = c.category_id
+JOIN sakila.film_actor as fa on fa.film_id = f.film_id
+JOIN sakila.actor as a on fa.actor_id = a.actor_id
+ORDER BY film_id);
+SELECT * from films_and_actors;
+
+
+
+
+DELIMITER $$
+CREATE PROCEDURE sakila.wordsearch(IN SPsearch varchar(25))
+BEGIN
+SELECT f.title, f.description from sakila.film as f
+WHERE f.description LIKE concat( '%',SPsearch, '%');
+END$$
+
+CALL sakila.wordsearch('the') 
+
+
+
+
+CREATE table employee_records
+(employee_id smallint NOT NULL AUTO_INCREMENT,
+f_name VARCHAR(20) NOT NULL,
+l_name VARCHAR(30) NOT NULL,
+job_title VARCHAR(20),
+username VARCHAR(20),
+password BINARY,
+PRIMARY KEY(employee_ID));
+
+
+
+INSERT INTO sakila.employee_records (employee_id, f_name, l_name, job_title, username, password)
+VALUES (1, 'Dalia', 'Database', 'Executive', 'dalia_d' , SHA2('movielover1', 256)),
+(2, 'Dante', 'Database', 'Executive', 'dante_d' , SHA2('Bossman99', 256));
+
+
+
+CREATE VIEW films_and_actors AS (
+#films and actors is a view of many of our tables joined together
+SELECT f.film_id, f.title, description, c.name as Genre, a.first_name, a.last_name FROM sakila.film as f
+#the film table is the centerpiece
+JOIN sakila.film_category as fc ON f.film_id = fc.film_id
+#we need film category to get the category_id, from there the next merge can get us film genre listed in plaintext
+JOIN sakila.category as c on fc.category_id = c.category_id
+#these next two joins ensure the actor names appear next to every film they act in and vice versa
+JOIN sakila.film_actor as fa on fa.film_id = f.film_id
+JOIN sakila.actor as a on fa.actor_id = a.actor_id
+#order by is not necessary, i just prefer the look of it
+ORDER BY film_id); 
+
+
+DELIMITER $$
+#create a stored procedure, and a perameter to search upon
+CREATE PROCEDURE sakila.wordsearch2(IN SPsearch carchar(25))
+BEGIN
+#return film title and descripion
+SELECT f.title, f.description from sakila.film as f
+WHERE f.description LIKE concat('%', SPsearch, '%');
+END$$
+
+CALL sakila.wordsearch2('fast')
+
+
